@@ -38,5 +38,10 @@ chain.clear() // clear canvas
 <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
 ```
 
+### Install
+
+    npm install jquery.chain
+    bower install jquery.chain
+
 
 ###### MIT License
