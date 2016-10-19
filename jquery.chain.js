@@ -27,19 +27,24 @@
         
         options = $.extend(
             {
-                line: {
-                    color: 'blue',
+                line  : {
+                    color: '#b59371',
                     width: 1
                 },
-                el  : '.Chain',
-                dot : '.Chain-dot'
+                dots  : {
+                    size : [2, 2],
+                    color: '#b59371'
+                },
+                el    : '.Chain',
+                follow: '.Chain-dot',
+                add   : 'round' // round, rect or false
             },
             options
         );
         
         var getPosition = function (el)
         {
-            return [el.position().left, el.position().top];
+            return [el.position().left + (el.data('left') || 0), el.position().top + (el.data('top') || 0)];
         };
         
         
@@ -48,7 +53,7 @@
             var $canvas = cache.canvas,
                 canvas  = $canvas[0],
                 context = cache.context || canvas.getContext('2d');
-    
+            
             cache.context = context;
             
             if (!cache.dots.length)
@@ -59,20 +64,58 @@
             
             context.beginPath();
             context.lineWidth = options.line.width;
-            context.moveTo.apply(context, getPosition(cache.dots[0]));
+            context.fillStyle = options.dots.color;
+            context.lineJoin  = "round";
+            context.strokeStyle = options.line.color;
             
             $.each(
                 cache.dots,
                 function (i, dot)
                 {
-                    if (!i) return;
+                    var yet_dot = getPosition(dot);
                     
-                    context.lineTo.apply(context, getPosition(dot));
+                    if (i === 0)
+                        context.moveTo.apply(context, yet_dot);
+                    else
+                        context.lineTo.apply(context, yet_dot);
                 }
             );
             
-            context.strokeStyle = options.line.color;
             context.stroke();
+            
+            /**
+             * Draw dots
+             */
+            if (options.add)
+            {
+                $.each(
+                    cache.dots,
+                    function (i, dot)
+                    {
+                        var yet_dot = getPosition(dot);
+                        
+                        if (options.add === 'round')
+                        {
+                            context.beginPath();
+                            context.arc(yet_dot[0], yet_dot[1], options.dots.size[0], 0, Math.PI * 2, false);
+                            context.fill();
+                            context.closePath();
+                        }
+                        
+                        else
+                            if (options.add === 'rect')
+                            {
+                                context.beginPath();
+                                context.fillRect(
+                                    yet_dot[0] - options.dots.size[0] / 2, yet_dot[1] - options.dots.size[1] / 2,
+                                    options.dots.size[0], options.dots.size[1]
+                                );
+                                context.fill();
+                                context.closePath();
+                            }
+                    }
+                );
+            }
             
             return true;
         };
@@ -86,7 +129,7 @@
             if (!block.data('chain-initialized'))
             {
                 block.css('position', 'relative');
-    
+                
                 cache.canvas = $(
                     '<canvas/>', {
                         css     : {
@@ -99,16 +142,16 @@
                     }
                 );
                 
-                $(options.dot, block).each(
+                $(options.follow, block).each(
                     function (i, el)
                     {
                         cache.dots.push($(el));
                     }
                 );
-    
+                
                 block.data('chain-initialized', true)
             }
-    
+            
             !function loop()
             {
                 self.draw();
@@ -117,35 +160,35 @@
         };
         
         
-        this._clear = function()
+        this._clear = function ()
         {
             var canvas = $(cache.canvas);
             
             cache.context.clearRect(0, 0, canvas.width(), canvas.height());
         };
-    
-    
+        
+        
         /**
          * Commands
          */
         
-        this.stop = function()
+        this.stop = function ()
         {
             this._stop = true;
         };
-    
+        
         this.start = function ()
         {
             this._stop = false;
             this.render()
         };
-    
+        
         this.clear = function ()
         {
             this._stop = true;
             this._clear();
         };
-    
+        
         return this;
     };
 }();

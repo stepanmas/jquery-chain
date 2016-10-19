@@ -49,8 +49,8 @@
 <body>
 
 <div class="Chain">
-    <div class="dot-1 Chain-dot"></div>
-    <div class="dot-2 Chain-dot"></div>
+    <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
+    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
     <div class="dot-3 Chain-dot"></div>
 </div>
 
@@ -70,7 +70,7 @@
                 chain.render();
 
 
-                setInterval(
+                /*setInterval(
                         function ()
                         {
                             $('.dot-1').animate(
@@ -92,6 +92,30 @@
                                     }
                             )
                         }, 500
+                );*/
+
+                $('.Chain').click(
+                        function()
+                        {
+                            $('.dot-1').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-2').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-3').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            )
+                        }
                 );
 
 
