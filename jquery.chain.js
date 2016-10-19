@@ -45,9 +45,9 @@
         
         this.draw = function ()
         {
-            var $canvas = $(cache.canvas),
+            var $canvas = cache.canvas,
                 canvas  = $canvas[0],
-                context = canvas.getContext('2d');
+                context = cache.context || canvas.getContext('2d');
     
             cache.context = context;
             
