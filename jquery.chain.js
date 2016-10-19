@@ -30,8 +30,7 @@
                     width: 1
                 },
                 el  : '.Chain',
-                dot : '.Chain-dot',
-                dots: []
+                dot : '.Chain-dot'
             },
             options
         );
