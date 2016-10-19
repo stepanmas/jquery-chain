@@ -4,12 +4,10 @@
     
     $.Chain = function (options)
     {
-        var cache = {
-            canvas: null,
-            dots  : []
-        };
+        var cache = [];
         
         this._stop = false;
+        this._requestId = null;
         
         window.requestAnimFrame = (function ()
         {
@@ -50,72 +48,79 @@
         
         this.draw = function ()
         {
-            var $canvas = cache.canvas,
-                canvas  = $canvas[0],
-                context = cache.context || canvas.getContext('2d');
-            
-            cache.context = context;
-            
-            if (!cache.dots.length)
-                return null;
-            
-            canvas.height = $canvas.height();
-            canvas.width  = $canvas.width();
-            
-            context.beginPath();
-            context.lineWidth = options.line.width;
-            context.fillStyle = options.dots.color;
-            context.lineJoin  = "round";
-            context.strokeStyle = options.line.color;
-            
             $.each(
-                cache.dots,
-                function (i, dot)
+                cache,
+                function ()
                 {
-                    var yet_dot = getPosition(dot);
+                    var $canvas = this.canvas,
+                        canvas  = $canvas[0],
+                        context = this.context || canvas.getContext('2d');
                     
-                    if (i === 0)
-                        context.moveTo.apply(context, yet_dot);
-                    else
-                        context.lineTo.apply(context, yet_dot);
+                    this.context = context;
+                    
+                    if (!this.dots.length)
+                        return null;
+                    
+                    canvas.height = $canvas.height();
+                    canvas.width  = $canvas.width();
+                    
+                    context.beginPath();
+                    context.lineWidth   = options.line.width;
+                    context.fillStyle   = options.dots.color;
+                    context.lineJoin    = "round";
+                    context.strokeStyle = options.line.color;
+                    
+                    $.each(
+                        this.dots,
+                        function (i, dot)
+                        {
+                            var yet_dot = getPosition(dot);
+                            
+                            if (i === 0)
+                                context.moveTo.apply(context, yet_dot);
+                            else
+                                context.lineTo.apply(context, yet_dot);
+                        }
+                    );
+                    
+                    context.stroke();
+                    
+                    /**
+                     * Draw dots
+                     */
+                    if (options.add)
+                    {
+                        $.each(
+                            this.dots,
+                            function (i, dot)
+                            {
+                                var yet_dot = getPosition(dot);
+                                
+                                if (options.add === 'round')
+                                {
+                                    context.beginPath();
+                                    context.arc(yet_dot[0], yet_dot[1], options.dots.size[0], 0, Math.PI * 2, false);
+                                    context.fill();
+                                    context.closePath();
+                                }
+                                
+                                else
+                                    if (options.add === 'rect')
+                                    {
+                                        context.beginPath();
+                                        context.fillRect(
+                                            yet_dot[0] - options.dots.size[0] / 2,
+                                            yet_dot[1] - options.dots.size[1] / 2,
+                                            options.dots.size[0], options.dots.size[1]
+                                        );
+                                        context.fill();
+                                        context.closePath();
+                                    }
+                            }
+                        );
+                    }
                 }
             );
-            
-            context.stroke();
-            
-            /**
-             * Draw dots
-             */
-            if (options.add)
-            {
-                $.each(
-                    cache.dots,
-                    function (i, dot)
-                    {
-                        var yet_dot = getPosition(dot);
-                        
-                        if (options.add === 'round')
-                        {
-                            context.beginPath();
-                            context.arc(yet_dot[0], yet_dot[1], options.dots.size[0], 0, Math.PI * 2, false);
-                            context.fill();
-                            context.closePath();
-                        }
-                        
-                        else
-                            if (options.add === 'rect')
-                            {
-                                context.beginPath();
-                                context.fillRect(
-                                    yet_dot[0] - options.dots.size[0] / 2, yet_dot[1] - options.dots.size[1] / 2,
-                                    options.dots.size[0], options.dots.size[1]
-                                );
-                                context.fill();
-                                context.closePath();
-                            }
-                    }
-                );
-            }
             
             return true;
         };
@@ -126,45 +131,69 @@
             var self  = this,
                 block = $(options.el);
             
-            if (!block.data('chain-initialized'))
-            {
-                block.css('position', 'relative');
-                
-                cache.canvas = $(
-                    '<canvas/>', {
-                        css     : {
-                            position     : 'absolute',
-                            width        : '100%',
-                            height       : '100%',
-                            pointerEvents: 'none'
-                        },
-                        appendTo: block
-                    }
-                );
-                
-                $(options.follow, block).each(
-                    function (i, el)
+            if (cache === null) throw new Error('Chain destroyed');
+            
+            block.each(
+                function ()
+                {
+                    var it = $(this);
+                    
+                    if (!it.data('chain-initialized'))
                     {
-                        cache.dots.push($(el));
+                        it.css('position', 'relative');
+                        
+                        var cacheObj = { dots: [] };
+                        
+                        cacheObj.canvas = $(
+                            '<canvas/>', {
+                                css     : {
+                                    position     : 'absolute',
+                                    width        : '100%',
+                                    height       : '100%',
+                                    pointerEvents: 'none'
+                                },
+                                appendTo: it
+                            }
+                        );
+                        
+                        $(options.follow, it).each(
+                            function (i, el)
+                            {
+                                cacheObj.dots.push($(el));
+                            }
+                        );
+                        
+                        it.data('chain-initialized', true);
+                        cache.push(cacheObj)
                     }
-                );
-                
-                block.data('chain-initialized', true)
+                }
+            );
+            
+            if (this._requestId)
+            {
+                window.cancelAnimationFrame(this._requestId);
+                this._requestId = null;
             }
             
             !function loop()
             {
                 self.draw();
-                if (!self._stop) requestAnimFrame(loop)
+                if (!self._stop)
+                    self._requestId = requestAnimFrame(loop)
             }();
         };
         
         
         this._clear = function ()
         {
-            var canvas = $(cache.canvas);
-            
-            cache.context.clearRect(0, 0, canvas.width(), canvas.height());
+            console.log(cache);
+            $.each(
+                cache,
+                function()
+                {
+                    this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
+                }
+            );
         };
         
         
@@ -187,6 +216,12 @@
         {
             this._stop = true;
             this._clear();
+        };
+        
+        this.destroy = function ()
+        {
+            this.clear();
+            this.cache = null;
         };
         
         return this;

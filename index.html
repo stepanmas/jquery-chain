@@ -12,14 +12,20 @@
             z-index  :10;
         }
 
-        .Chain{
+        .Chain, .Chain1{
+            position   :relative;
             border     :1px solid;
             width      :600px;
             height     :300px;
             background :#fff;
         }
 
-        .dot-1, .dot-2, .dot-3{
+        .Chain-small{
+            width  :400px;
+            height :200px;
+        }
+
+        .dot-1, .dot-2, .dot-3, .dot-4, .dot-5, .dot-6{
             position   :absolute;
             background :cornflowerblue;
             width      :10px;
@@ -30,17 +36,17 @@
             background :red;
         }
 
-        .dot-1{
+        .dot-1, .dot-5{
             left :10px;
             top  :10px;
         }
 
-        .dot-2{
+        .dot-2, .dot-4{
             left :300px;
             top  :200px;
         }
 
-        .dot-3{
+        .dot-3, .dot-6{
             left :400px;
             top  :200px;
         }
@@ -53,26 +59,62 @@
     <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
     <div class="dot-3 Chain-dot"></div>
 </div>
+<div class="Chain Chain-small">
+    <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
+    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
+    <div class="dot-3 Chain-dot"></div>
+</div>
+
+<div class="Chain1">
+    <div class="dot-5 Chain-dot" data-left="5" data-top="5"></div>
+    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
+    <div class="dot-6 Chain-dot"></div>
+</div>
 
 
 <button class="start">Start</button>
 <button class="stop">Stop</button>
 <button class="clear">clear</button>
+<button class="destroy">destroy</button>
 
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="jquery.chain.js"></script>
 <script>
     $(
-            function()
+            function ()
             {
-                var chain = new $.Chain();
+                var chain  = new $.Chain();
+                var chain1 = new $.Chain(
+                        {
+                            el: '.Chain1'
+                        }
+                );
 
                 chain.render();
+                chain1.render();
 
 
                 setInterval(
                         function ()
                         {
+                            $('.dot-6').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-5').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-4').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
                             $('.dot-1').animate(
                                     {
                                         left: Math.random() * 300,
@@ -120,7 +162,7 @@
 
 
                 $('.start').click(
-                        function()
+                        function ()
                         {
                             chain.start();
                         }
@@ -137,6 +179,13 @@
                         function ()
                         {
                             chain.clear();
+                        }
+                );
+
+                $('.destroy').click(
+                        function ()
+                        {
+                            chain.destroy();
                         }
                 )
             }
