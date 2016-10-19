@@ -1,0 +1,29 @@
+{
+  "name": "jquery.chain",
+  "version": "0.1.0",
+  "description": "Bundle of lines use HTML5 canvas",
+  "main": "jquery.chain.js",
+  "dependencies": {
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stepanmas/jquery.chain.git"
+  },
+  "keywords": [
+    "jquery",
+    "chain",
+    "HTML5",
+    "canvas"
+  ],
+  "author": "StepanMas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stepanmas/jquery.chain/issues"
+  },
+  "homepage": "https://github.com/stepanmas/jquery.chain#readme"
+}

@@ -1,0 +1,90 @@
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        body{
+            background :#ccc;
+        }
+
+        canvas{
+            position :relative;
+            z-index  :10;
+        }
+
+        .Chain{
+            border     :1px solid;
+            width      :600px;
+            height     :300px;
+            background :#fff;
+        }
+
+        .dot-1, .dot-2, .dot-3{
+            position   :absolute;
+            background :cornflowerblue;
+            width      :10px;
+            height     :10px;
+        }
+
+        .dot-1:hover, .dot-2:hover{
+            background :red;
+        }
+
+        .dot-1{
+            left :10px;
+            top  :10px;
+        }
+
+        .dot-2{
+            left :300px;
+            top  :200px;
+        }
+
+        .dot-3{
+            left :400px;
+            top  :200px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="Chain">
+    <div class="dot-1 Chain-dot"></div>
+    <div class="dot-2 Chain-dot"></div>
+    <div class="dot-3 Chain-dot"></div>
+</div>
+
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="jquery.chain.js"></script>
+<script>
+    var chain = new $.Chain();
+
+    chain.render();
+
+
+    setInterval(
+            function()
+            {
+                $('.dot-1').animate(
+                        {
+                            left: Math.random() * 300,
+                            top : Math.random() * 300
+                        }
+                );
+                $('.dot-2').animate(
+                        {
+                            left: Math.random() * 300,
+                            top : Math.random() * 300
+                        }
+                );
+                $('.dot-3').animate(
+                        {
+                            left: Math.random() * 300,
+                            top : Math.random() * 300
+                        }
+                )
+            }, 500
+    )
+</script>
+</body>
+</html>
