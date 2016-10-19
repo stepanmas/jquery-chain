@@ -1,6 +1,7 @@
 # jquery.chain
 Bundle of lines use HTML5 canvas
 
+[Example](https://jsfiddle.net/StepanMas/ps2pj7p9/1/)
 ![see example](example.gif)
 
 
@@ -16,6 +17,5 @@ var chain = new $.Chain({
 });
 
 chain.render();
-
 
 ```

@@ -54,36 +54,68 @@
     <div class="dot-3 Chain-dot"></div>
 </div>
 
+
+<button class="start">Start</button>
+<button class="stop">Stop</button>
+<button class="clear">clear</button>
+
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="jquery.chain.js"></script>
 <script>
-    var chain = new $.Chain();
-
-    chain.render();
-
-
-    setInterval(
+    $(
             function()
             {
-                $('.dot-1').animate(
+                var chain = new $.Chain();
+
+                chain.render();
+
+
+                setInterval(
+                        function ()
                         {
-                            left: Math.random() * 300,
-                            top : Math.random() * 300
+                            $('.dot-1').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-2').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            );
+                            $('.dot-3').animate(
+                                    {
+                                        left: Math.random() * 300,
+                                        top : Math.random() * 300
+                                    }
+                            )
+                        }, 500
+                );
+
+
+                $('.start').click(
+                        function()
+                        {
+                            chain.start();
                         }
                 );
-                $('.dot-2').animate(
+
+                $('.stop').click(
+                        function ()
                         {
-                            left: Math.random() * 300,
-                            top : Math.random() * 300
+                            chain.stop();
                         }
                 );
-                $('.dot-3').animate(
+
+                $('.clear').click(
+                        function ()
                         {
-                            left: Math.random() * 300,
-                            top : Math.random() * 300
+                            chain.clear();
                         }
                 )
-            }, 500
+            }
     )
 </script>
 </body>

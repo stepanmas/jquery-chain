@@ -9,6 +9,8 @@
             dots  : []
         };
         
+        this._stop = false;
+        
         window.requestAnimFrame = (function ()
         {
             return window.requestAnimationFrame ||
@@ -46,6 +48,8 @@
             var $canvas = $(cache.canvas),
                 canvas  = $canvas[0],
                 context = canvas.getContext('2d');
+    
+            cache.context = context;
             
             if (!cache.dots.length)
                 return null;
@@ -101,18 +105,47 @@
                         cache.dots.push($(el));
                     }
                 );
-                
-                !function loop()
-                {
-                    self.draw();
-                    requestAnimFrame(loop)
-                }();
+    
+                block.data('chain-initialized', true)
             }
-            
-            if (!this.draw())
-                console.warn('Elements for bind is not found');
+    
+            !function loop()
+            {
+                self.draw();
+                if (!self._stop) requestAnimFrame(loop)
+            }();
         };
         
+        
+        this._clear = function()
+        {
+            var canvas = $(cache.canvas);
+            
+            cache.context.clearRect(0, 0, canvas.width(), canvas.height());
+        };
+    
+    
+        /**
+         * Commands
+         */
+        
+        this.stop = function()
+        {
+            this._stop = true;
+        };
+    
+        this.start = function ()
+        {
+            this._stop = false;
+            this.render()
+        };
+    
+        this.clear = function ()
+        {
+            this._stop = true;
+            this._clear();
+        };
+    
         return this;
     };
 }();
