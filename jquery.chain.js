@@ -92,7 +92,7 @@
     $.Chain.prototype.update = function (number, position, block)
     {
         if (this.cache.length)
-            this.cache[block || 0].dots[number] = [position[0], position[1]]
+            this.cache[block || 0].dots[number] = (position instanceof Array ? [position[0], position[1]] : position)
     };
     
     
