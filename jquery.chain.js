@@ -55,7 +55,7 @@
             return [el.position().left + (el.data('left') || 0), el.position().top + (el.data('top') || 0)];
         };
         
-        this._clear = function (force)
+        this._clear = function (cb)
         {
             var self = this;
             
@@ -67,14 +67,19 @@
                         function ()
                         {
                             this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
+                            
+                            if (cb)
+                                this.canvas.remove();
                         }
                     );
                     
-                    if (force)
+                    if (cb)
                     {
                         self.cache = [];
-                        $(self.options.el).removeData('chain-initialized').find('canvas').remove()
+                        $(self.options.el).data('chain-initialized', false);
                     }
+                    
+                    if (cb) cb();
                 }
             )
         };
@@ -230,9 +235,9 @@
         this.render()
     };
     
-    $.Chain.prototype.clear = function (force)
+    $.Chain.prototype.clear = function (cb)
     {
         this.stop();
-        this._clear(force);
+        this._clear(cb);
     };
 }();
