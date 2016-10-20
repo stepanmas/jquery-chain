@@ -12,7 +12,7 @@
             z-index  :10;
         }
 
-        .Chain, .Chain1{
+        .Chain, .Chain1, .Chain2{
             position   :relative;
             border     :1px solid;
             width      :600px;
@@ -20,12 +20,7 @@
             background :#fff;
         }
 
-        .Chain-small{
-            width  :400px;
-            height :200px;
-        }
-
-        .dot-1, .dot-2, .dot-3, .dot-4, .dot-5, .dot-6{
+        div[class^="dot-"]{
             position   :absolute;
             background :cornflowerblue;
             width      :10px;
@@ -54,22 +49,46 @@
 </head>
 <body>
 
-<div class="Chain">
-    <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
-    <div class="dot-2 Chain-dot" data-left="5" data-top="5"></div>
-    <div class="dot-3 Chain-dot" data-left="5" data-top="5"></div>
-</div>
-<div class="Chain Chain-small">
-    <div class="dot-1 Chain-dot" data-left="-5" data-top="-15"></div>
-    <div class="dot-2 Chain-dot" data-left="55" data-top="-20"></div>
-    <div class="dot-3 Chain-dot"></div>
-</div>
-
-<div class="Chain1">
-    <div class="dot-5 Chain-dot"></div>
-    <div class="dot-2 Chain-dot"></div>
-    <div class="dot-6 Chain-dot"></div>
-</div>
+<table>
+    <tr>
+        <td>
+            Simular:
+            <div class="Chain">
+                <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
+                <div class="dot-2 Chain-dot" data-left="5" data-top="5"></div>
+                <div class="dot-3 Chain-dot" data-left="5" data-top="5"></div>
+            </div>
+        </td>
+        <td>
+            Simular:
+            <div class="Chain">
+                <div class="dot-1 Chain-dot" data-left="-5" data-top="-15"></div>
+                <div class="dot-2 Chain-dot" data-left="55" data-top="-20"></div>
+                <div class="dot-3 Chain-dot"></div>
+            </div>
+        </td>
+        <td>
+            follow: [node, node, node]
+            <div class="Chain1">
+                <div class="dot-5 Chain-dot"></div>
+                <div class="dot-2 Chain-dot"></div>
+                <div class="dot-6 Chain-dot"></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            follow: [ [x, y], [x, y], [x, y] ]
+            <div class="Chain2">
+                <div class="dot-1 Chain-dot"></div>
+                <div class="dot-4 Chain-dot"></div>
+                <div class="dot-6 Chain-dot"></div>
+            </div>
+        </td>
+        <td></td>
+    </tr>
+</table>
 
 
 <button class="start">Start</button>
@@ -82,7 +101,7 @@
     $(
             function ()
             {
-                var chain  = new $.Chain(
+                var chain = new $.Chain(
                         {
                             canvas: {
                                 appendTo: false
@@ -91,104 +110,126 @@
                 );
 
                 var chainEl = $('.Chain1');
-                var chain1 = new $.Chain(
+                var chain1  = new $.Chain(
                         {
-                            el: chainEl,
+                            el    : chainEl,
                             follow: [$('.dot-5', chainEl)[0], $('.dot-6', chainEl)[0], $('.dot-2', chainEl)[0]]
+                        }
+                );
+
+                var chain2_el = $('.Chain2');
+                var dot1      = $('.dot-1', chain2_el);
+                var dot2      = $('.dot-4', chain2_el);
+                var dot3      = $('.dot-6', chain2_el);
+
+                var chain2 = new $.Chain(
+                        {
+                            el    : chain2_el,
+                            follow: [
+                                [dot1.position().left, dot1.position().top],
+                                [dot2.position().left, dot2.position().top],
+                                [dot3.position().left, dot3.position().top]
+                            ]
                         }
                 );
 
                 chain.render();
                 chain1.render();
+                chain2.render();
 
 
-                setInterval(
-                        function ()
-                        {
-                            $('.dot-6').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-5').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-4').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-1').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-2').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-3').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            )
-                        }, 500
-                );
 
-                /*$('.Chain').click(
-                        function()
-                        {
-                            $('.dot-1').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-2').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            );
-                            $('.dot-3').animate(
-                                    {
-                                        left: Math.random() * 300,
-                                        top : Math.random() * 300
-                                    }
-                            )
-                        }
-                );*/
+                !function ()
+                {
+                    $('.Chain').click(
+                            function ()
+                            {
+                                //runAmin()
+                            }
+                    );
 
 
-                $('.start').click(
-                        function ()
-                        {
-                            chain.start();
-                        }
-                );
+                    $('.start').click(
+                            function ()
+                            {
+                                chain.start();
+                            }
+                    );
 
-                $('.stop').click(
-                        function ()
-                        {
-                            chain.stop();
-                        }
-                );
+                    $('.stop').click(
+                            function ()
+                            {
+                                chain.stop();
+                            }
+                    );
 
-                $('.clear').click(
-                        function ()
-                        {
-                            chain.clear();
-                        }
-                );
+                    $('.clear').click(
+                            function ()
+                            {
+                                chain.clear();
+                            }
+                    );
+                }();
+
+                var runAmin = function ()
+                {
+                    $('.dot-6').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            },
+                            {
+                                step: function ()
+                                {
+                                    chain2.update(2, [$(this).position().left, $(this).position().top])
+                                }
+                            }
+                    );
+                    $('.dot-5').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            }
+                    );
+                    $('.dot-4').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            },
+                            {
+                                step: function ()
+                                {
+                                    chain2.update(1, [$(this).position().left, $(this).position().top])
+                                }
+                            }
+                    );
+                    $('.dot-1').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            },
+                            {
+                                step: function (i)
+                                {
+                                    chain2.update(0, [$(this).position().left, $(this).position().top])
+                                }
+                            }
+                    );
+                    $('.dot-2').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            }
+                    );
+                    $('.dot-3').animate(
+                            {
+                                left: Math.random() * 300,
+                                top : Math.random() * 300
+                            }
+                    )
+                }
+
+                setInterval(runAmin, 500);
             }
     )
 </script>

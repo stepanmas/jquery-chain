@@ -42,6 +42,7 @@ chain.render();
 chain.stop() // stop follow
 chain.start()
 chain.clear(fn) // clear canvas, if set function to clear cache too and to rm canvas, after run callback
+chain.update(index, [x, y], block) // set new position (if use: follow: [ [x, y], [x, y], [x, y] ]) "block" is optionally
 ```
 
 ### To use the offset

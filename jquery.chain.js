@@ -88,6 +88,14 @@
         return this;
     };
     
+    
+    $.Chain.prototype.update = function (number, position, block)
+    {
+        if (this.cache.length)
+            this.cache[block || 0].dots[number] = [position[0], position[1]]
+    };
+    
+    
     // Main methods
     $.Chain.prototype.draw = function ()
     {
