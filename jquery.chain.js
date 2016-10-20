@@ -33,7 +33,7 @@
                     color: '#b59371'
                 },
                 el    : '.Chain',
-                follow: '.Chain-dot',
+                follow: '.Chain-dot', // selector or array contains offset, example: [[50, 32], node] or [[50, 32], [323, 43]]
                 add   : 'round', // round, rect or false
                 canvas: {
                     appendTo: false,
@@ -52,6 +52,7 @@
         
         this.getPosition = function (el)
         {
+            if (el instanceof Array) return el;
             return [el.position().left + (el.data('left') || 0), el.position().top + (el.data('top') || 0)];
         };
         
@@ -196,7 +197,8 @@
                     $(self.options.follow, it).each(
                         function (i, el)
                         {
-                            cacheObj.dots.push($(el));
+                            if (el instanceof Array) cacheObj.dots.push(el);
+                            else cacheObj.dots.push($(el));
                         }
                     );
                     
