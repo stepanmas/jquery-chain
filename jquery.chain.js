@@ -33,7 +33,18 @@
                 },
                 el    : '.Chain',
                 follow: '.Chain-dot',
-                add   : 'round' // round, rect or false
+                add   : 'round', // round, rect or false
+                canvas: {
+                    appendTo: false,
+                    css     : {
+                        position     : 'absolute',
+                        width        : '100%',
+                        height       : '100%',
+                        pointerEvents: 'none',
+                        left         : 0,
+                        top          : 0
+                    }
+                }
             },
             options
         );
@@ -171,13 +182,8 @@
                     
                     cacheObj.canvas = $(
                         '<canvas/>', {
-                            css     : {
-                                position     : 'absolute',
-                                width        : '100%',
-                                height       : '100%',
-                                pointerEvents: 'none'
-                            },
-                            appendTo: it
+                            css     : self.options.canvas.css,
+                            appendTo: self.options.canvas.appendTo || it
                         }
                     );
                     

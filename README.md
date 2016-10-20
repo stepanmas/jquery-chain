@@ -19,7 +19,18 @@ var chain = new $.Chain({
     },
     el    : '.Chain', // selector or node
     follow: '.Chain-dot', // items by block, selector or array nodes
-    add   : 'round' // enable round, rect or false
+    add   : 'round', // enable round, rect or false
+    canvas: {
+        appendTo: false, // insert canvas to node, false = el: '.Chain'
+        css     : {
+            position     : 'absolute',
+            width        : '100%',
+            height       : '100%',
+            pointerEvents: 'none',
+            left         : 0,
+            top          : 0
+        }
+    }
 });
 
 chain.render();
