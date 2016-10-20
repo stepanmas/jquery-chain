@@ -41,7 +41,7 @@ chain.render();
 ```javascript
 chain.stop() // stop follow
 chain.start()
-chain.clear(bool) // clear canvas, if set param force=true to clear cache too and to rm canvas
+chain.clear(fn) // clear canvas, if set function to clear cache too and to rm canvas, after run callback
 ```
 
 ### To use the offset
