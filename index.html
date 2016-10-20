@@ -56,18 +56,18 @@
 
 <div class="Chain">
     <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
-    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
-    <div class="dot-3 Chain-dot"></div>
+    <div class="dot-2 Chain-dot" data-left="5" data-top="5"></div>
+    <div class="dot-3 Chain-dot" data-left="5" data-top="5"></div>
 </div>
 <div class="Chain Chain-small">
-    <div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
-    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
+    <div class="dot-1 Chain-dot" data-left="-5" data-top="-15"></div>
+    <div class="dot-2 Chain-dot" data-left="55" data-top="-20"></div>
     <div class="dot-3 Chain-dot"></div>
 </div>
 
 <div class="Chain1">
-    <div class="dot-5 Chain-dot" data-left="5" data-top="5"></div>
-    <div class="dot-2 Chain-dot" data-left="-5" data-top="-10"></div>
+    <div class="dot-5 Chain-dot"></div>
+    <div class="dot-2 Chain-dot"></div>
     <div class="dot-6 Chain-dot"></div>
 </div>
 
@@ -75,7 +75,6 @@
 <button class="start">Start</button>
 <button class="stop">Stop</button>
 <button class="clear">clear</button>
-<button class="destroy">destroy</button>
 
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="jquery.chain.js"></script>
@@ -84,9 +83,12 @@
             function ()
             {
                 var chain  = new $.Chain();
+
+                var chainEl = $('.Chain1');
                 var chain1 = new $.Chain(
                         {
-                            el: '.Chain1'
+                            el: chainEl,
+                            follow: [$('.dot-5', chainEl)[0], $('.dot-6', chainEl)[0], $('.dot-2', chainEl)[0]]
                         }
                 );
 
@@ -181,13 +183,6 @@
                             chain.clear();
                         }
                 );
-
-                $('.destroy').click(
-                        function ()
-                        {
-                            chain.destroy();
-                        }
-                )
             }
     )
 </script>

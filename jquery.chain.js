@@ -4,9 +4,8 @@
     
     $.Chain = function (options)
     {
-        var cache = [];
-        
-        this._stop = false;
+        this.cache      = [];
+        this._stop      = false;
         this._requestId = null;
         
         window.requestAnimFrame = (function ()
@@ -22,8 +21,7 @@
                 };
         })();
         
-        
-        options = $.extend(
+        this.options = $.extend(
             {
                 line  : {
                     color: '#b59371',
@@ -40,190 +38,194 @@
             options
         );
         
-        var getPosition = function (el)
+        this.getPosition = function (el)
         {
             return [el.position().left + (el.data('left') || 0), el.position().top + (el.data('top') || 0)];
         };
         
-        
-        this.draw = function ()
+        this._clear = function (force)
         {
-            $.each(
-                cache,
+            var self = this;
+            
+            requestAnimationFrame(
                 function ()
                 {
-                    var $canvas = this.canvas,
-                        canvas  = $canvas[0],
-                        context = this.context || canvas.getContext('2d');
+                    $.each(
+                        self.cache,
+                        function ()
+                        {
+                            this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
+                        }
+                    );
                     
-                    this.context = context;
-                    
-                    if (!this.dots.length)
-                        return null;
-                    
-                    canvas.height = $canvas.height();
-                    canvas.width  = $canvas.width();
-                    
-                    context.beginPath();
-                    context.lineWidth   = options.line.width;
-                    context.fillStyle   = options.dots.color;
-                    context.lineJoin    = "round";
-                    context.strokeStyle = options.line.color;
-                    
+                    if (force)
+                    {
+                        self.cache = [];
+                        $(self.options.el).removeData('chain-initialized').find('canvas').remove()
+                    }
+                }
+            )
+        };
+        
+        return this;
+    };
+    
+    // Main methods
+    $.Chain.prototype.draw = function ()
+    {
+        var self    = this,
+            options = this.options;
+        
+        $.each(
+            this.cache,
+            function ()
+            {
+                var $canvas = this.canvas,
+                    canvas  = $canvas[0],
+                    context = this.context || canvas.getContext('2d');
+                
+                this.context = context;
+                
+                if (!this.dots.length)
+                    return null;
+                
+                canvas.height = $canvas.height();
+                canvas.width  = $canvas.width();
+                
+                context.beginPath();
+                context.lineWidth   = options.line.width;
+                context.fillStyle   = options.dots.color;
+                context.lineJoin    = "round";
+                context.strokeStyle = options.line.color;
+                
+                $.each(
+                    this.dots,
+                    function (i, dot)
+                    {
+                        var yet_dot = self.getPosition(dot);
+                        
+                        if (i === 0)
+                            context.moveTo.apply(context, yet_dot);
+                        else
+                            context.lineTo.apply(context, yet_dot);
+                    }
+                );
+                
+                context.stroke();
+                
+                /**
+                 * Draw dots
+                 */
+                if (options.add)
+                {
                     $.each(
                         this.dots,
                         function (i, dot)
                         {
-                            var yet_dot = getPosition(dot);
+                            var yet_dot = self.getPosition(dot);
                             
-                            if (i === 0)
-                                context.moveTo.apply(context, yet_dot);
-                            else
-                                context.lineTo.apply(context, yet_dot);
-                        }
-                    );
-                    
-                    context.stroke();
-                    
-                    /**
-                     * Draw dots
-                     */
-                    if (options.add)
-                    {
-                        $.each(
-                            this.dots,
-                            function (i, dot)
+                            if (options.add === 'round')
                             {
-                                var yet_dot = getPosition(dot);
-                                
-                                if (options.add === 'round')
+                                context.beginPath();
+                                context.arc(yet_dot[0], yet_dot[1], options.dots.size[0], 0, Math.PI * 2, false);
+                                context.fill();
+                                context.closePath();
+                            }
+                            
+                            else
+                                if (options.add === 'rect')
                                 {
                                     context.beginPath();
-                                    context.arc(yet_dot[0], yet_dot[1], options.dots.size[0], 0, Math.PI * 2, false);
+                                    context.fillRect(
+                                        yet_dot[0] - options.dots.size[0] / 2,
+                                        yet_dot[1] - options.dots.size[1] / 2,
+                                        options.dots.size[0], options.dots.size[1]
+                                    );
                                     context.fill();
                                     context.closePath();
                                 }
-                                
-                                else
-                                    if (options.add === 'rect')
-                                    {
-                                        context.beginPath();
-                                        context.fillRect(
-                                            yet_dot[0] - options.dots.size[0] / 2,
-                                            yet_dot[1] - options.dots.size[1] / 2,
-                                            options.dots.size[0], options.dots.size[1]
-                                        );
-                                        context.fill();
-                                        context.closePath();
-                                    }
-                            }
-                        );
-                    }
+                        }
+                    );
                 }
-            );
-            
-            return true;
-        };
-        
-        
-        this.render = function ()
-        {
-            var self  = this,
-                block = $(options.el);
-            
-            if (cache === null) throw new Error('Chain destroyed');
-            
-            block.each(
-                function ()
-                {
-                    var it = $(this);
-                    
-                    if (!it.data('chain-initialized'))
-                    {
-                        it.css('position', 'relative');
-                        
-                        var cacheObj = { dots: [] };
-                        
-                        cacheObj.canvas = $(
-                            '<canvas/>', {
-                                css     : {
-                                    position     : 'absolute',
-                                    width        : '100%',
-                                    height       : '100%',
-                                    pointerEvents: 'none'
-                                },
-                                appendTo: it
-                            }
-                        );
-                        
-                        $(options.follow, it).each(
-                            function (i, el)
-                            {
-                                cacheObj.dots.push($(el));
-                            }
-                        );
-                        
-                        it.data('chain-initialized', true);
-                        cache.push(cacheObj)
-                    }
-                }
-            );
-            
-            if (this._requestId)
-            {
-                window.cancelAnimationFrame(this._requestId);
-                this._requestId = null;
             }
-            
-            !function loop()
+        );
+        
+        return true;
+    };
+    
+    $.Chain.prototype.render = function ()
+    {
+        var self  = this,
+            block = $(this.options.el);
+        
+        block.each(
+            function ()
             {
-                self.draw();
-                if (!self._stop)
-                    self._requestId = requestAnimFrame(loop)
-            }();
-        };
-        
-        
-        this._clear = function ()
-        {
-            console.log(cache);
-            $.each(
-                cache,
-                function()
+                var it = $(this);
+                
+                if (!it.data('chain-initialized'))
                 {
-                    this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
+                    it.css('position', 'relative');
+                    
+                    var cacheObj = { dots: [] };
+                    
+                    cacheObj.canvas = $(
+                        '<canvas/>', {
+                            css     : {
+                                position     : 'absolute',
+                                width        : '100%',
+                                height       : '100%',
+                                pointerEvents: 'none'
+                            },
+                            appendTo: it
+                        }
+                    );
+                    
+                    $(self.options.follow, it).each(
+                        function (i, el)
+                        {
+                            cacheObj.dots.push($(el));
+                        }
+                    );
+                    
+                    it.data('chain-initialized', true);
+                    self.cache.push(cacheObj)
                 }
-            );
-        };
+            }
+        );
         
-        
-        /**
-         * Commands
-         */
-        
-        this.stop = function ()
+        if (this._requestId)
         {
-            this._stop = true;
-        };
+            window.cancelAnimationFrame(this._requestId);
+            this._requestId = null;
+        }
         
-        this.start = function ()
+        !function loop()
         {
-            this._stop = false;
-            this.render()
-        };
-        
-        this.clear = function ()
-        {
-            this._stop = true;
-            this._clear();
-        };
-        
-        this.destroy = function ()
-        {
-            this.clear();
-            this.cache = null;
-        };
-        
-        return this;
+            self.draw();
+            if (!self._stop)
+                self._requestId = requestAnimFrame(loop)
+        }();
+    };
+    
+    /**
+     * Commands
+     */
+    
+    $.Chain.prototype.stop = function ()
+    {
+        this._stop = true;
+    };
+    
+    $.Chain.prototype.start = function ()
+    {
+        this._stop = false;
+        this.render()
+    };
+    
+    $.Chain.prototype.clear = function (force)
+    {
+        this.stop();
+        this._clear(force);
     };
 }();

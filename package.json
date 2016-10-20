@@ -1,6 +1,6 @@
 {
   "name": "jquery.chain",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Follow for dots use a lines",
   "main": "jquery.chain.js",
   "dependencies": {

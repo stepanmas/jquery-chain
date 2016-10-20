@@ -17,8 +17,8 @@ var chain = new $.Chain({
         size : [2, 2], // size rect, first arg. like radius for round
         color: '#b59371' // color rect or round
     },
-    el    : '.Chain', // block
-    follow: '.Chain-dot', // items by block
+    el    : '.Chain', // selector or node
+    follow: '.Chain-dot', // items by block, selector or array nodes
     add   : 'round' // enable round, rect or false
 });
 
@@ -30,12 +30,12 @@ chain.render();
 ```javascript
 chain.stop() // stop follow
 chain.start()
-chain.clear() // clear canvas
+chain.clear(bool) // clear canvas, if set param force=true to clear cache too and to rm canvas
 ```
 
 ### To use the offset
 ```html
-<div class="dot-1 Chain-dot" data-left="5" data-top="5"></div>
+<div class="dot-1 Chain-dot" data-left="5" data-top="5"></div> // data attributes for offset
 ```
 
 ### Install
