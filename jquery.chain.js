@@ -22,6 +22,7 @@
         })();
         
         this.options = $.extend(
+            true,
             {
                 line  : {
                     color: '#b59371',

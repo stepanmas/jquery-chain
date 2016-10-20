@@ -82,7 +82,13 @@
     $(
             function ()
             {
-                var chain  = new $.Chain();
+                var chain  = new $.Chain(
+                        {
+                            canvas: {
+                                appendTo: false
+                            }
+                        }
+                );
 
                 var chainEl = $('.Chain1');
                 var chain1 = new $.Chain(
