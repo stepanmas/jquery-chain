@@ -13,11 +13,20 @@
             return window.requestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
                 window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
                 function (callback)
                 {
-                    window.setTimeout(callback, 1000 / 60);
+                    setTimeout(callback, 1000 / 60);
+                };
+        })();
+        
+        window.cancelAnimationFrame = (function ()
+        {
+            return window.cancelAnimationFrame ||
+                window.mozCancelAnimationFrame ||
+                window.webkitCancelAnimationFrame ||
+                function (t)
+                {
+                    clearTimeout(t);
                 };
         })();
         
@@ -68,9 +77,6 @@
                         function ()
                         {
                             this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
-                            
-                            if (cb)
-                                this.canvas.remove();
                         }
                     );
                     
@@ -78,9 +84,8 @@
                     {
                         self.cache = [];
                         $(self.options.el).data('chain-initialized', false);
+                        cb();
                     }
-                    
-                    if (cb) cb();
                 }
             )
         };
@@ -187,20 +192,25 @@
         block.each(
             function ()
             {
-                var it = $(this);
+                var it           = $(this),
+                    canvasParent = self.options.canvas.appendTo || it;
                 
                 if (!it.data('chain-initialized'))
                 {
-                    it.css('position', 'relative');
+                    canvasParent.css('position', 'relative');
                     
-                    var cacheObj = { dots: [] };
+                    var canvas   = $('> canvas', canvasParent),
+                        cacheObj = { dots: [] };
                     
-                    cacheObj.canvas = $(
-                        '<canvas/>', {
-                            css     : self.options.canvas.css,
-                            appendTo: self.options.canvas.appendTo || it
-                        }
-                    );
+                    if (!canvas.length)
+                        canvas = $(
+                            '<canvas/>', {
+                                css     : self.options.canvas.css,
+                                appendTo: canvasParent
+                            }
+                        );
+                    
+                    cacheObj.canvas = canvas;
                     
                     $(self.options.follow, it).each(
                         function (i, el)

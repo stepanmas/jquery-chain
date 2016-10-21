@@ -12,7 +12,7 @@
             z-index  :10;
         }
 
-        .Chain, .Chain1, .Chain2{
+        .Chain, .Chain1, .Chain2, .Chain3{
             position   :relative;
             border     :1px solid;
             width      :600px;
@@ -77,7 +77,16 @@
         </td>
     </tr>
     <tr>
-        <td></td>
+        <td>
+            Other parent
+            <div>
+                <div class="Chain3">
+                    <div class="dot-2 Chain-dot"></div>
+                    <div class="dot-1 Chain-dot"></div>
+                    <div class="dot-6 Chain-dot"></div>
+                </div>
+            </div>
+        </td>
         <td>
             follow: [ [x, y], [x, y], [x, y] ]
             <div class="Chain2">
@@ -133,9 +142,19 @@
                         }
                 );
 
+                var chain3 = new $.Chain(
+                        {
+                            el    : $('.Chain3'),
+                            canvas: {
+                                appendTo: $('.Chain3').parent()
+                            }
+                        }
+                );
+
                 chain.render();
                 chain1.render();
                 chain2.render();
+                chain3.render();
 
 
 
